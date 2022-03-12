@@ -1,0 +1,15 @@
+{
+    "presets": [
+        //JavaScript 最新的语法糖进行编译，并不负责转译新增的 API 和全局对象
+        //  Promise,Iterator,Generator,Set,Maps,Proxy,Symbol 等不能被转换
+        "@babel/preset-env" // 语法转换器
+        // "@babel/preset-typescript" // ts --> js
+        //  其他的
+        //  @babel/preset-react jsx 语法
+        // 
+    ], // 预设
+    "comments": false, // 不产生注释
+    "plugins": [
+        "@babel/plugin-transform-runtime" // 可以转译所有 ES6 API 和全局对象
+    ] // 插件
+}
