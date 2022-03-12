@@ -1,4 +1,13 @@
-const log = require('./index');
+const Xlog = require('./cjs/index');
+const path = require('path');
+
+let xlog = new Xlog({
+    filePath: path.join(__dirname, 'logs'),
+    logsName: 'xinxin',
+    isSave: true,
+    dependENV: true
+});
 
 
-log.info('asd');
+xlog.info('asdada');
+xlog.err('asdada')

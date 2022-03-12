@@ -1,17 +1,21 @@
 {
-  "name": "ideaprojects",
-  "version": "0.0.1",
+  "name": "xlog",
+  "version": "0.1.0",
   "description": "日志处理",
   "main": "dist/index.js",
   "dest": "dist/index.js",
-  "demo": "demo/index.js",
+  "demo": "demo/cjs/index.js",
   "dependencies": {
     "@babel/runtime": "^7.15.4",
+    "@types/fs-extra": "^9.0.13",
     "chalk": "^4.0.1",
     "commonjs": "^0.0.1",
+    "dayjs": "^1.10.8",
     "events": "^3.3.0",
+    "fs-extra": "^10.0.1",
     "hotkeys-js": "^3.8.7",
     "lodash": "^4.17.21",
+    "queue": "^6.0.2",
     "rollup-plugin-typescript2": "^0.31.2"
   },
   "devDependencies": {
@@ -39,5 +43,8 @@
     "log",
     "node"
   ],
+  "bugs": {
+    "url": "https://github.com/JoneXin/Xlog/issues"
+  },
   "license": "ISC"
 }
