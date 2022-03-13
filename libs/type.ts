@@ -11,4 +11,6 @@ export type xLogConfig = {
     logsName: string;
     isSave?: boolean;
     dependENV?: boolean;
+    keepDays?: number;
+    maxSize?: number;
 }

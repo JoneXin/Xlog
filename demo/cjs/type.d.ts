@@ -7,5 +7,7 @@ export declare type xLogConfig = {
     logsName: string;
     isSave?: boolean;
     dependENV?: boolean;
+    keepDays?: number;
+    maxSize?: number;
 };
 //# sourceMappingURL=type.d.ts.map

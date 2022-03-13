@@ -24,22 +24,33 @@ class Xfs {
 
     public static async deleteFile(filePath: string): Promise<boolean> {
 
-        if (!fs.pathExistsSync(filePath)) {
+        if (fs.pathExistsSync(filePath)) {
 
             // 异步销毁
-            fs.remove(filePath, err => {
-
-                if (err) {
-                    console.log(err);
-                    return false;
-                }
-
+            try {
+                await fs.remove(filePath);
                 return true;
-            })
+            } catch (_) {
+                console.log(_);
+                return false;
+            }
         }
-
-        return true;
+        return false;
     }
+
+    public static getFileList(filePath: string, callback): void {
+
+        fs.readdir(filePath, (err, fileList) => {
+
+            if (err) {
+                console.log(err);
+                callback([]);
+            }
+
+            callback(fileList);
+        })
+    }
+
 }
 
 export default Xfs;
