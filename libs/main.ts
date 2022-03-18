@@ -58,7 +58,7 @@ class Logger {
 
         const { filePos, lineNum } = this.getMsgPos(new Error());
 
-        console.log(chalk.greenBright.underline(filePos), chalk.bgCyan.black(` rows: ${lineNum} `), ' ==> ', chalk.greenBright(msg) || '');
+        console.log(chalk.greenBright.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk.greenBright(msg) || '');
 
         // 根据环境自动监测日志是否保存
         if (this.dependENV) {
@@ -79,7 +79,7 @@ class Logger {
 
         const { filePos, lineNum } = this.getMsgPos(new Error());
 
-        console.error(chalk.redBright.bold.underline(filePos), chalk.bgYellow.black(` rows: ${lineNum} `), ' ==> ', chalk.redBright(msg) || '');
+        console.error(chalk.redBright.bold.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk.redBright(msg) || '');
 
         // 根据环境自动监测日志是否保存
         if (this.dependENV) {
@@ -114,9 +114,9 @@ class Logger {
 
         let filePos = '', lineNum = '0';
         if (os.type() == 'Windows_NT') {
-            const arr = e.stack.split("\n")[2].split('(')[1].split(':');
+            const arr = e.stack.split("\n")[2].split(':');
             // 文件位置
-            filePos = arr[0] + ':' + arr[1];
+            filePos = arr[0].slice(arr[0].length - 1) + ':' + arr[1];
             // 行号
             lineNum = arr[2];
         } else {

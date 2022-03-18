@@ -1,52 +1,54 @@
 {
-  "name": "xlog",
-  "version": "0.2.2",
-  "description": "日志处理",
-  "main": "dist/index.js",
-  "dest": "dist/index.js",
-  "demo": "demo/cjs/index.js",
-  "dependencies": {
-    "@babel/runtime": "^7.15.4",
-    "@types/fs-extra": "^9.0.13",
-    "@types/node-schedule": "^1.3.2",
-    "chalk": "^4.0.1",
-    "commonjs": "^0.0.1",
-    "dayjs": "^1.10.8",
-    "events": "^3.3.0",
-    "fs-extra": "^10.0.1",
-    "hotkeys-js": "^3.8.7",
-    "lodash": "^4.17.21",
-    "node-schedule": "^2.1.0",
-    "queue": "^6.0.2",
-    "rollup-plugin-typescript2": "^0.31.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.14.6",
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.14.7",
-    "@babel/preset-typescript": "^7.14.5",
-    "@rollup/plugin-commonjs": "^19.0.1",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.0.2",
-    "rollup-plugin-babel": "^4.4.0"
-  },
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w"
-  },
-  "author": "Jone Xin",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JoneXin/Xlog"
-  },
-  "keywords": [
-    "xlog",
-    "logs",
-    "log",
-    "node"
-  ],
-  "bugs": {
-    "url": "https://github.com/JoneXin/Xlog/issues"
-  },
-  "license": "ISC"
+    "name": "xlog",
+    "version": "0.3.2",
+    "description": "日志处理",
+    "main": "dist/index.js",
+    "dest": "dist/index.js",
+    "demo": "demo/cjs/index.js",
+    "dependencies": {
+        "@babel/runtime": "^7.15.4",
+        "@types/fs-extra": "^9.0.13",
+        "@types/node-schedule": "^1.3.2",
+        "chalk": "^4.0.1",
+        "commonjs": "^0.0.1",
+        "dayjs": "^1.10.8",
+        "events": "^3.3.0",
+        "fs-extra": "^10.0.1",
+        "hotkeys-js": "^3.8.7",
+        "lodash": "^4.17.21",
+        "node-schedule": "^2.1.0",
+        "queue": "^6.0.2",
+        "rollup": "^2.70.1",
+        "rollup-plugin-typescript2": "^0.31.2",
+        "typescript": "^4.6.2"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.14.6",
+        "@babel/plugin-transform-runtime": "^7.15.0",
+        "@babel/preset-env": "^7.14.7",
+        "@babel/preset-typescript": "^7.14.5",
+        "@rollup/plugin-commonjs": "^19.0.1",
+        "@rollup/plugin-json": "^4.1.0",
+        "@rollup/plugin-node-resolve": "^13.0.2",
+        "rollup-plugin-babel": "^4.4.0"
+    },
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w"
+    },
+    "author": "Jone Xin",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JoneXin/Xlog"
+    },
+    "keywords": [
+        "xlog",
+        "logs",
+        "log",
+        "node"
+    ],
+    "bugs": {
+        "url": "https://github.com/JoneXin/Xlog/issues"
+    },
+    "license": "ISC"
 }
