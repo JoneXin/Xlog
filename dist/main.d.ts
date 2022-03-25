@@ -9,9 +9,14 @@ declare class Logger {
     private keepDays;
     private maxSize;
     private delLock;
+    private htppConf;
+    private static http;
     protected static delQueue: queue;
+    private static httpNewsQueue;
     constructor(options: xLogConfig);
+    static createLogger(config: xLogConfig): Logger;
     private init;
+    private static transPortNews;
     info(msg: any): void;
     err(msg: any): void;
     private saveLogs;

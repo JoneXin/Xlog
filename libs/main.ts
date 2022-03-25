@@ -1,11 +1,12 @@
 
 import chalk from 'chalk';
-import { msgPos, xLogConfig } from './type';
+import { msgPos, xLogConfig, httpConf, httpNewsContent, logsType } from './type';
 import xfs from './file/xfs';
 import queue from 'queue'
 import schedule from 'node-schedule';
 import dayjs from 'dayjs';
 import os from 'os';
+import axios from 'axios'
 
 class Logger {
 
@@ -23,9 +24,14 @@ class Logger {
     private maxSize: number = 5 * 1024;
     // 删除锁
     private delLock: boolean = false;
+    // http 日志传输选项
+    private htppConf: httpConf
 
+    private static http
     // 删除队列，所有实例共享
     protected static delQueue: queue
+    // http 消息队列
+    private static httpNewsQueue: queue
 
     constructor(options: xLogConfig) {
 
@@ -35,15 +41,30 @@ class Logger {
         this.dependENV = options.dependENV;
         this.keepDays = options.keepDays || this.keepDays;
         this.maxSize = options.maxSize;
+        this.htppConf = options.httpConf
 
         this.init();
     }
+
+    // 创建实例
+    public static createLogger(config: xLogConfig): Logger {
+        return new Logger(config);
+    }
+
     // 初始化
     private init() {
         // 写日志队列
         this.logsQueue = queue({ concurrency: 1, autostart: true });
+
         // 删日志队列
-        Logger.delQueue = queue({ concurrency: 1, autostart: true });
+        if (!Logger.delQueue) {
+            Logger.delQueue = queue({ concurrency: 1, autostart: true });
+        }
+
+        if (!Logger.httpNewsQueue) {
+            Logger.httpNewsQueue = queue({ concurrency: 1, autostart: true });
+        }
+
         // 定时删除任务[生产环境适用]
         if (process.env.NODE_ENV == 'production') {
             schedule.scheduleJob('* * */24 * * *', () => {
@@ -51,6 +72,20 @@ class Logger {
             });
         }
 
+    }
+
+    // 发送消息
+    private static async transPortNews(logsContent: httpNewsContent, conf: httpConf) {
+
+        try {
+            await axios({
+                url: `http://${conf.aimIp}:${conf.aimPort}/remote`,
+                method: 'POST',
+                data: logsContent
+            })
+        } catch (_) {
+            return false;
+        }
     }
 
     // info
@@ -72,6 +107,21 @@ class Logger {
         if (this.isSave) {
             this.saveLogs(filePos, lineNum, msg, 'info');
         }
+
+        // http
+        if (this.htppConf) {
+            Logger.httpNewsQueue.push(async cb => {
+
+                await Logger.transPortNews({
+                    filePath: filePos,
+                    time: dayjs().format('YYYY-MM-DD-hh:mm:ss'),
+                    row: Number(lineNum),
+                    logsContent: msg,
+                    type: logsType.Info
+                }, this.htppConf);
+                cb();
+            });
+        }
     }
 
     // err
@@ -92,6 +142,21 @@ class Logger {
         // 开发环境保存日志
         if (this.isSave) {
             this.saveLogs(filePos, lineNum, msg, 'err');
+        }
+
+        // http
+        if (this.htppConf) {
+            Logger.httpNewsQueue.push(async cb => {
+
+                await Logger.transPortNews({
+                    filePath: filePos,
+                    time: dayjs().format('YYYY-MM-DD-hh:mm:ss'),
+                    row: Number(lineNum),
+                    logsContent: msg,
+                    type: logsType.Error
+                }, this.htppConf);
+                cb();
+            });
         }
     }
 
@@ -144,6 +209,7 @@ class Logger {
         })
     }
 
+    // 删除日志
     private deleteLogs() {
 
         let delTag = false;
