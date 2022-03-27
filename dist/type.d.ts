@@ -8,12 +8,17 @@ export declare type httpNewsContent = {
     row: number;
     logsContent: string;
     type: logsType;
+    category?: string | string[];
+    projectName: string;
+    logsName: string;
 };
 export declare type msgPos = {
     filePos: string;
     lineNum: string;
 };
 export declare type xLogConfig = {
+    category?: string | string[];
+    projectName: string;
     filePath: string;
     logsName: string;
     isSave?: boolean;

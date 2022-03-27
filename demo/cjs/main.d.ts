@@ -1,6 +1,8 @@
 import { xLogConfig } from './type';
 import queue from 'queue';
 declare class Logger {
+    private projectName;
+    private category;
     private filePath;
     private logsName;
     private isSave;

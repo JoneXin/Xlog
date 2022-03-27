@@ -8,7 +8,10 @@ export type httpNewsContent = {
     filePath: string,
     row: number,
     logsContent: string,
-    type: logsType
+    type: logsType;
+    category?: string | string[];
+    projectName: string;
+    logsName: string;
 }
 
 // 消息位置属性
@@ -18,13 +21,15 @@ export type msgPos = {
 }
 
 export type xLogConfig = {
+    category?: string | string[];
+    projectName: string;
     filePath: string;
     logsName: string;
     isSave?: boolean;
     dependENV?: boolean;
     keepDays?: number;
     maxSize?: number;
-    httpConf: httpConf
+    httpConf: httpConf;
 }
 
 export type httpConf = {

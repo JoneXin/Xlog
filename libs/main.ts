@@ -10,6 +10,8 @@ import axios from 'axios'
 
 class Logger {
 
+    private projectName = 'default';
+    private category = [];
     private filePath: string;
     private logsName: string = 'default';
     // 在开发环境是否保存日志
@@ -37,6 +39,9 @@ class Logger {
 
         this.filePath = options.filePath;
         this.logsName = options.logsName;
+
+        this.category = typeof options.category == 'string' ? [options.category] : options.category;
+        this.projectName = options.projectName;
         this.isSave = options.isSave;
         this.dependENV = options.dependENV;
         this.keepDays = options.keepDays || this.keepDays;
@@ -113,8 +118,11 @@ class Logger {
             Logger.httpNewsQueue.push(async cb => {
 
                 await Logger.transPortNews({
+                    logsName: `${this.logsName}_${dayjs().format('YYYY-MM-DD')}.log`,
                     filePath: filePos,
-                    time: dayjs().format('YYYY-MM-DD-hh:mm:ss'),
+                    category: this.category,
+                    projectName: this.projectName,
+                    time: dayjs().format('YYYY-MM-DD hh:mm:ss'),
                     row: Number(lineNum),
                     logsContent: msg,
                     type: logsType.Info
@@ -149,11 +157,14 @@ class Logger {
             Logger.httpNewsQueue.push(async cb => {
 
                 await Logger.transPortNews({
+                    logsName: `${this.logsName}_error_${dayjs().format('YYYY-MM-DD')}.log`,
                     filePath: filePos,
-                    time: dayjs().format('YYYY-MM-DD-hh:mm:ss'),
+                    time: dayjs().format('YYYY-MM-DD hh:mm:ss'),
                     row: Number(lineNum),
                     logsContent: msg,
-                    type: logsType.Error
+                    type: logsType.Error,
+                    category: this.category,
+                    projectName: this.projectName,
                 }, this.htppConf);
                 cb();
             });
@@ -168,8 +179,17 @@ class Logger {
 
         // format
         const logsData = `${time} ${filePos} 【第${lineNum}行】==> ${msg}`;
+        let logsFilePath = '';
         // 路径转换
-        const logsFilePath = types == 'info' ? `${this.filePath}/${this.logsName}_${dayTime}.log` : `${this.filePath}/${this.logsName}_error_${dayTime}.log`;
+        if (types == 'info') {
+            logsFilePath = `${this.filePath}${this.category.length ?
+                ('/' + this.category.reduce((pre, cur) => pre + '/' + cur)) :
+                ''}/${this.logsName}_${dayTime}.log`
+        } else {
+            logsFilePath = `${this.filePath}${this.category.length ?
+                ('/' + this.category.reduce((pre, cur) => pre + '/' + cur)) :
+                ''} /${this.logsName}_error_${dayTime}.log`;
+        }
 
         xfs.writeFile(logsFilePath, logsData);
     }
