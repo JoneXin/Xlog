@@ -1,3 +1,5 @@
+/// <reference types="node" />
+export declare type global = Global;
 export declare enum logsType {
     Info = "info",
     Error = "error"
@@ -21,15 +23,35 @@ export declare type xLogConfig = {
     projectName: string;
     filePath: string;
     logsName: string;
-    isSave?: boolean;
+    logging?: boolean;
     dependENV?: boolean;
     keepDays?: number;
     maxSize?: number;
-    httpConf: httpConf;
+    httpModel?: boolean;
+    httpConf?: httpConf;
 };
 export declare type httpConf = {
     aimIp: string;
     aimPort: number;
+    projectName?: string;
     format?: (param: httpNewsContent) => {};
+};
+export declare type SaveLogsType = {
+    filePos: string;
+    lineNum: string;
+    msg: string;
+    types: string;
+};
+export declare type ProjectBaseInfo = {
+    filePath?: string;
+    logsName?: string;
+    keepDays?: number;
+    logging?: boolean;
+    httpConf?: httpConf;
+    httpModel?: boolean;
+};
+export declare type DelConf = {
+    filePath: string;
+    keepDays: number;
 };
 //# sourceMappingURL=type.d.ts.map

@@ -1,3 +1,5 @@
+export type global = Global
+
 export enum logsType {
     Info = 'info',
     Error = 'error'
@@ -25,16 +27,39 @@ export type xLogConfig = {
     projectName: string;
     filePath: string;
     logsName: string;
-    isSave?: boolean;
+    logging?: boolean;
     dependENV?: boolean;
     keepDays?: number;
     maxSize?: number;
-    httpConf: httpConf;
+    httpModel?: boolean;
+    httpConf?: httpConf;
 }
 
 export type httpConf = {
     aimIp: string,
     aimPort: number,
+    projectName?: string;
     format?: (param: httpNewsContent) => {}
+}
+
+export type SaveLogsType = {
+    filePos: string, 
+    lineNum: string, 
+    msg: string, 
+    types: string
+}
+
+export type ProjectBaseInfo = {
+    filePath?: string; 
+    logsName?: string;
+    keepDays?: number;
+    logging?: boolean;
+    httpConf?: httpConf;
+    httpModel?: boolean;
+}
+
+export type DelConf = {
+    filePath: string; 
+    keepDays: number;
 }
 

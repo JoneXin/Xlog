@@ -18,8 +18,8 @@ const logger = new Xlog({
 const logger1 = new Xlog({
     projectName: 'Xlog',
     filePath: path.join(__dirname, '../logs'),
-    category: ['piantie', 'piantieqian'],
-    logsName: 'aaa',
+    category: ['test', 'test'],
+    logsName: 'line',
     keepDays: 1,
     isSave: true,
     httpConf: {
@@ -30,16 +30,16 @@ const logger1 = new Xlog({
 
 let i = 0;
 logger1.info('asdasda')
-logger1.err('哎asdas呀asd')
+logger1.err([1,2])
 
-setInterval(() => {
-    // logger.info('找sad阿四');
-    // logger.info('找sad阿四');
-    // logger.info('找sad阿四');
-    // logger.info('找sad阿四');
-    // logger.info('找sad阿四');
-    // logger.info('找sad阿四');
-    // logger.info('找sad阿四');
-    // logger.err('asdaksjdhasihduiasnd');
-    logger1.err(`[{a: 1}, {b: 2}]${i}`)
-}, 1000)
+// setInterval(() => {
+//     // logger.info('找sad阿四');
+//     // logger.info('找sad阿四');
+//     // logger.info('找sad阿四');
+//     // logger.info('找sad阿四');
+//     // logger.info('找sad阿四');
+//     // logger.info('找sad阿四');
+//     // logger.info('找sad阿四');
+//     // logger.err('asdaksjdhasihduiasnd');
+//     logger1.err(`[{a: 1}, {b: 2}]${i}`)
+// }, 1000)
