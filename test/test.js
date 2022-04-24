@@ -8,7 +8,7 @@ const logger = new Xlog({
     category: 'test',
     logsName: 'aaa',
     keepDays: 1,
-    isSave: true,
+    logging: true,
     httpConf: {
         aimIp: '127.0.0.1',
         aimPort: 4499
@@ -21,7 +21,7 @@ const logger1 = new Xlog({
     category: ['test', 'test'],
     logsName: 'line',
     keepDays: 1,
-    isSave: true,
+    logging: true,
     httpConf: {
         aimIp: '127.0.0.1',
         aimPort: 4499

@@ -41,7 +41,7 @@ class Tools {
      */
     public static saveLogs(logsContent: SaveLogsType, projectConf: ProjectBaseInfo) {
 
-        let time = dayjs().format('YYYY-MM-DD-hh:mm:ss');
+        let time = dayjs().format('YYYY-MM-DD HH:mm:ss');
         let dayTime = dayjs().format('YYYY-MM-DD');
 
         // format

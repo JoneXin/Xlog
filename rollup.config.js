@@ -41,11 +41,11 @@ export default [
                 // name: 'Logger',
                 file: pkg.demo,
                 format: 'cjs',
-            }
+            },
             // {
-            //     name: 'AILabel',
-            //     file: pkg.browser_website,
-            //     format: 'umd'
+            //     name: 'logger',
+            //     file: pkg.dest,
+            //     format: 'esm',
             // },
         ],
         plugins

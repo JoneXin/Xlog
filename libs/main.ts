@@ -22,8 +22,8 @@ export class Logger {
     private dependENV: boolean = false;
     // logs任务队列
     private logsQueue: queue;
-    // 过期天数 【最小粒度，1天】 默认7天
-    private keepDays: number = 7;
+    // 过期天数 【最小粒度，1天】 默认3天
+    private keepDays: number = 0;
     // 最大大小 单位 M 默认 5g
     private maxSize: number = 5 * 1024;
     // 删除锁
@@ -31,8 +31,6 @@ export class Logger {
     private httpModel: boolean;
     // http 日志传输选项
     private httpConf: httpConf;
-
-    private static http;
     // 删除队列，所有实例共享
     protected static delQueue: queue;
     // http 消息队列
@@ -45,6 +43,7 @@ export class Logger {
     private static logging: boolean; // 是否输出日志文件【生产环境自动 输出， 此配置主要试用于开发环境需要写日志文件的需求】
     private static httpConf: httpConf;
     private static httpModel: boolean;
+    private static delJobs: any = null; // 定时删除任务id
 
     constructor(options: xLogConfig) {
 
@@ -80,8 +79,8 @@ export class Logger {
         }
 
         // 定时删除任务[生产环境适用]
-        if (process.env.NODE_ENV == 'production') {
-            schedule.scheduleJob('* * */24 * * *', () => {
+        if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
+            Logger.delJobs = schedule.scheduleJob('0 0 23 * * *', () => {
                 Logger.deleteJobs();
             });
         }
@@ -119,7 +118,7 @@ export class Logger {
                     filePath: filePos,
                     category: [],
                     projectName: Logger.httpConf.projectName,
-                    time: dayjs().format('YYYY-MM-DD hh:mm:ss'),
+                    time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                     row: Number(lineNum),
                     logsContent: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) || '',
                     type: logsType.Info
@@ -151,7 +150,7 @@ export class Logger {
                     filePath: filePos,
                     category: [],
                     projectName: Logger.httpConf.projectName,
-                    time: dayjs().format('YYYY-MM-DD hh:mm:ss'),
+                    time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                     row: Number(lineNum),
                     logsContent: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) || '',
                     type: logsType.Error
@@ -170,6 +169,12 @@ export class Logger {
     private init() {
         // 写日志队列
         this.logsQueue = queue({ concurrency: 1, autostart: true });
+        // 定时删除任务[生产环境适用]
+        if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
+            Logger.delJobs = schedule.scheduleJob('0 0 23 * * *', () => {
+                Logger.deleteJobs();
+            });
+        }
     }
 
     // 实例 info
@@ -182,7 +187,7 @@ export class Logger {
 
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push(async cb => {
-                await Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: this.filePath, logsName: this.logsName });
+                await Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             });
         }
@@ -215,7 +220,7 @@ export class Logger {
         // 输出到日志文件
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push(async cb => {
-                await Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: this.filePath, logsName: this.logsName });
+                await Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             })
         }

@@ -17489,7 +17489,7 @@ class Tools {
      * @param projectConf 项目配置
      */
     static saveLogs(logsContent, projectConf) {
-        let time = dayjs().format('YYYY-MM-DD-hh:mm:ss');
+        let time = dayjs().format('YYYY-MM-DD HH:mm:ss');
         let dayTime = dayjs().format('YYYY-MM-DD');
         // format
         const logsData = `${time} ${logsContent.filePos} 【第${logsContent.lineNum}行】==> ${logsContent.msg}`;
@@ -17521,8 +17521,8 @@ class Logger {
         this.logging = false;
         // 依赖环境 去创建日志文件  development不创建  prodution 创建
         this.dependENV = false;
-        // 过期天数 【最小粒度，1天】 默认7天
-        this.keepDays = 7;
+        // 过期天数 【最小粒度，1天】 默认3天
+        this.keepDays = 0;
         // 最大大小 单位 M 默认 5g
         this.maxSize = 5 * 1024;
         // 删除锁
@@ -17552,8 +17552,8 @@ class Logger {
             Logger.httpNewsQueue = queue({ concurrency: 1, autostart: true });
         }
         // 定时删除任务[生产环境适用]
-        if (process.env.NODE_ENV == 'production') {
-            nodeSchedule.scheduleJob('* * */24 * * *', () => {
+        if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
+            Logger.delJobs = nodeSchedule.scheduleJob('0 0 23 * * *', () => {
                 Logger.deleteJobs();
             });
         }
@@ -17584,7 +17584,7 @@ class Logger {
                     filePath: filePos,
                     category: [],
                     projectName: Logger.httpConf.projectName,
-                    time: dayjs().format('YYYY-MM-DD hh:mm:ss'),
+                    time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                     row: Number(lineNum),
                     logsContent: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) || '',
                     type: logsType.Info
@@ -17611,7 +17611,7 @@ class Logger {
                     filePath: filePos,
                     category: [],
                     projectName: Logger.httpConf.projectName,
-                    time: dayjs().format('YYYY-MM-DD hh:mm:ss'),
+                    time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                     row: Number(lineNum),
                     logsContent: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) || '',
                     type: logsType.Error
@@ -17628,6 +17628,12 @@ class Logger {
     init() {
         // 写日志队列
         this.logsQueue = queue({ concurrency: 1, autostart: true });
+        // 定时删除任务[生产环境适用]
+        if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
+            Logger.delJobs = nodeSchedule.scheduleJob('0 0 23 * * *', () => {
+                Logger.deleteJobs();
+            });
+        }
     }
     // 实例 info
     info(msgs) {
@@ -17636,7 +17642,7 @@ class Logger {
         console.log(chalk__default["default"].greenBright.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk__default["default"].greenBright(JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1)) || '');
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push((cb) => __awaiter(this, void 0, void 0, function* () {
-                yield Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: this.filePath, logsName: this.logsName });
+                yield Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             }));
         }
@@ -17665,7 +17671,7 @@ class Logger {
         // 输出到日志文件
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push((cb) => __awaiter(this, void 0, void 0, function* () {
-                yield Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: this.filePath, logsName: this.logsName });
+                yield Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             }));
         }
@@ -17776,6 +17782,7 @@ class Logger {
         }));
     }
 }
+Logger.delJobs = null; // 定时删除任务id
 const path = require$$1__default$1["default"];
 
 exports.Logger = Logger;

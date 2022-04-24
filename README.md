@@ -2,7 +2,7 @@
 a logs tool for node
 ```js
 // 全局配置 基本操作
-const {Logger : log, path} = require('../dist/main');
+const {Logger : log, path} = require('xlog');
 Logger.initLogger();
 // 默认全局属性
 logger.info(1); // default name // X:\my-open-project\Xlog\test\test1.js 【rows: 2】  ==>  1
