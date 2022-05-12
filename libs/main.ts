@@ -10,7 +10,7 @@ import axios from 'axios';
 import Tools from './utils/tool';
 import { resolve } from 'path';
 import paths from 'path';
-export class Logger {
+class Logger {
 
     private projectName = 'default';
     private category: string [] = [];
@@ -23,7 +23,7 @@ export class Logger {
     // logs任务队列
     private logsQueue: queue;
     // 过期天数 【最小粒度，1天】 默认3天
-    private keepDays: number = 0;
+    private keepDays: number = 3;
     // 最大大小 单位 M 默认 5g
     private maxSize: number = 5 * 1024;
     // 删除锁
@@ -39,11 +39,12 @@ export class Logger {
     private static saveQueue: queue;
     private static logsName: string;
     private static filePath: string;
-    private static keepDays: number;
+    private static keepDays: number = 3; // 默认3 天
     private static logging: boolean; // 是否输出日志文件【生产环境自动 输出， 此配置主要试用于开发环境需要写日志文件的需求】
     private static httpConf: httpConf;
     private static httpModel: boolean;
     private static delJobs: any = null; // 定时删除任务id
+    private static delCorn: string = '0 0 */1 * * *'; // 每小时执行一次
 
     constructor(options: xLogConfig) {
 
@@ -64,6 +65,13 @@ export class Logger {
 
     public static initLogger(projectConf?: ProjectBaseInfo) {
 
+        Logger.filePath = projectConf?.filePath || `${resolve()}/logs`;
+        Logger.logsName = projectConf?.logsName || 'default';
+        Logger.keepDays = projectConf?.keepDays || Logger.keepDays;
+        Logger.logging = projectConf?.logging || false;
+        Logger.httpConf = projectConf?.httpConf || { aimIp: '127.0.0.1', aimPort: 4499, projectName: 'default' };
+        Logger.httpModel = projectConf?.httpModel || false;
+
         // 实例化 写日志队列
         if (!Logger.saveQueue) {
             Logger.saveQueue = queue({ concurrency: 1, autostart: true });
@@ -80,17 +88,10 @@ export class Logger {
 
         // 定时删除任务[生产环境适用]
         if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
-            Logger.delJobs = schedule.scheduleJob('0 0 23 * * *', () => {
+            Logger.delJobs = schedule.scheduleJob(Logger.delCorn, () => {
                 Logger.deleteJobs();
             });
         }
-
-        Logger.filePath = projectConf?.filePath || `${resolve()}/logs`;
-        Logger.logsName = projectConf?.logsName || 'default';
-        Logger.keepDays = projectConf?.keepDays || 3;
-        Logger.logging = projectConf?.logging || false;
-        Logger.httpConf = projectConf?.httpConf || { aimIp: '127.0.0.1', aimPort: 4499, projectName: 'default' };
-        Logger.httpModel = projectConf?.httpModel || false;
 
         // 配置全局默认日志对象
         global.logger = Logger;
@@ -171,7 +172,7 @@ export class Logger {
         this.logsQueue = queue({ concurrency: 1, autostart: true });
         // 定时删除任务[生产环境适用]
         if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
-            Logger.delJobs = schedule.scheduleJob('0 0 23 * * *', () => {
+            Logger.delJobs = schedule.scheduleJob(Logger.delCorn, () => {
                 Logger.deleteJobs();
             });
         }
@@ -318,6 +319,8 @@ export class Logger {
     // 删除日志
     private static deleteLogs(delConf?: DelConf) {
 
+        Logger.info('开始删除日志');
+
         let delTag = false;
         let keepDays = delConf?.keepDays || Logger.keepDays;
         let filePath = delConf?.filePath || Logger.filePath;
@@ -326,21 +329,22 @@ export class Logger {
 
             for (let i = 0; i < list.length; i++) {
                 const date = list[i].slice(list[i].lastIndexOf('_') + 1, list[i].lastIndexOf('.'));
-                console.log(Date.now() - dayjs(date).valueOf(), keepDays * 24 * 60 * 60, keepDays);
+                console.log(Date.now() , dayjs(date).valueOf(), keepDays * 24 * 60 * 60 * 1000, keepDays);
 
-                if (Date.now() - dayjs(date).valueOf() > keepDays * 24 * 60 * 60) {
+                if (Date.now() - dayjs(date).valueOf() > keepDays * 24 * 60 * 60 * 1000) {
                     // 过期的
                     let status = await xfs.deleteFile(`${filePath}/${list[i]}`);
                     if (status) {
-                        console.log(`清除 ${list[i]}`);
+                        Logger.info(`清除 ${list[i]}`);
                         delTag = true;
                     };
                 }
             }
 
-            if (!delTag) console.log('无可清除日志!');
+            if (!delTag) Logger.info('无可清除日志!');
         })
     }
 }
 
 export const path = paths;
+export const xlog = Logger.initLogger();

@@ -17522,7 +17522,7 @@ class Logger {
         // 依赖环境 去创建日志文件  development不创建  prodution 创建
         this.dependENV = false;
         // 过期天数 【最小粒度，1天】 默认3天
-        this.keepDays = 0;
+        this.keepDays = 3;
         // 最大大小 单位 M 默认 5g
         this.maxSize = 5 * 1024;
         // 删除锁
@@ -17540,6 +17540,12 @@ class Logger {
         this.init();
     }
     static initLogger(projectConf) {
+        Logger.filePath = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.filePath) || `${require$$1$1.resolve()}/logs`;
+        Logger.logsName = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.logsName) || 'default';
+        Logger.keepDays = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.keepDays) || Logger.keepDays;
+        Logger.logging = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.logging) || false;
+        Logger.httpConf = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.httpConf) || { aimIp: '127.0.0.1', aimPort: 4499, projectName: 'default' };
+        Logger.httpModel = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.httpModel) || false;
         // 实例化 写日志队列
         if (!Logger.saveQueue) {
             Logger.saveQueue = queue({ concurrency: 1, autostart: true });
@@ -17553,16 +17559,10 @@ class Logger {
         }
         // 定时删除任务[生产环境适用]
         if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
-            Logger.delJobs = nodeSchedule.scheduleJob('0 0 23 * * *', () => {
+            Logger.delJobs = nodeSchedule.scheduleJob(Logger.delCorn, () => {
                 Logger.deleteJobs();
             });
         }
-        Logger.filePath = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.filePath) || `${require$$1$1.resolve()}/logs`;
-        Logger.logsName = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.logsName) || 'default';
-        Logger.keepDays = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.keepDays) || 3;
-        Logger.logging = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.logging) || false;
-        Logger.httpConf = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.httpConf) || { aimIp: '127.0.0.1', aimPort: 4499, projectName: 'default' };
-        Logger.httpModel = (projectConf === null || projectConf === void 0 ? void 0 : projectConf.httpModel) || false;
         // 配置全局默认日志对象
         global.logger = Logger;
         return Logger;
@@ -17630,7 +17630,7 @@ class Logger {
         this.logsQueue = queue({ concurrency: 1, autostart: true });
         // 定时删除任务[生产环境适用]
         if (process.env.NODE_ENV == 'production' && !Logger.delJobs) {
-            Logger.delJobs = nodeSchedule.scheduleJob('0 0 23 * * *', () => {
+            Logger.delJobs = nodeSchedule.scheduleJob(Logger.delCorn, () => {
                 Logger.deleteJobs();
             });
         }
@@ -17760,6 +17760,7 @@ class Logger {
     }
     // 删除日志
     static deleteLogs(delConf) {
+        Logger.info('开始删除日志');
         let delTag = false;
         let keepDays = (delConf === null || delConf === void 0 ? void 0 : delConf.keepDays) || Logger.keepDays;
         let filePath = (delConf === null || delConf === void 0 ? void 0 : delConf.filePath) || Logger.filePath;
@@ -17767,23 +17768,26 @@ class Logger {
         Xfs.getFileList(filePath, (list) => __awaiter(this, void 0, void 0, function* () {
             for (let i = 0; i < list.length; i++) {
                 const date = list[i].slice(list[i].lastIndexOf('_') + 1, list[i].lastIndexOf('.'));
-                console.log(Date.now() - dayjs(date).valueOf(), keepDays * 24 * 60 * 60, keepDays);
-                if (Date.now() - dayjs(date).valueOf() > keepDays * 24 * 60 * 60) {
+                console.log(Date.now(), dayjs(date).valueOf(), keepDays * 24 * 60 * 60 * 1000, keepDays);
+                if (Date.now() - dayjs(date).valueOf() > keepDays * 24 * 60 * 60 * 1000) {
                     // 过期的
                     let status = yield Xfs.deleteFile(`${filePath}/${list[i]}`);
                     if (status) {
-                        console.log(`清除 ${list[i]}`);
+                        Logger.info(`清除 ${list[i]}`);
                         delTag = true;
                     }
                 }
             }
             if (!delTag)
-                console.log('无可清除日志!');
+                Logger.info('无可清除日志!');
         }));
     }
 }
+Logger.keepDays = 3; // 默认3 天
 Logger.delJobs = null; // 定时删除任务id
+Logger.delCorn = '0 0 */1 * * *'; // 每小时执行一次
 const path = require$$1__default$1["default"];
+const xlog = Logger.initLogger();
 
-exports.Logger = Logger;
 exports.path = path;
+exports.xlog = xlog;

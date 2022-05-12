@@ -1,13 +1,3 @@
-## 使用
-```
-const {xlog} = require('../dist/main');
-
-xlog.info('sada');
-xlog.err('sada');
-```
-
-## 实例化
-```
 const {xlog, path} = require('../dist/main');
 
 const logger = new xlog({
@@ -33,4 +23,3 @@ setInterval(() => {
 setInterval(() => {
     logger1.info('asdasda');
 }, 1000)
-```

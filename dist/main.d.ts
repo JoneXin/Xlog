@@ -2,7 +2,7 @@
 import { xLogConfig, ProjectBaseInfo } from './type';
 import queue from 'queue';
 import paths from 'path';
-export declare class Logger {
+declare class Logger {
     private projectName;
     private category;
     private filePath;
@@ -15,7 +15,6 @@ export declare class Logger {
     private delLock;
     private httpModel;
     private httpConf;
-    private static http;
     protected static delQueue: queue;
     private static httpNewsQueue;
     private static saveQueue;
@@ -25,6 +24,8 @@ export declare class Logger {
     private static logging;
     private static httpConf;
     private static httpModel;
+    private static delJobs;
+    private static delCorn;
     constructor(options: xLogConfig);
     static initLogger(projectConf?: ProjectBaseInfo): typeof Logger;
     static info(msgs?: any): void;
@@ -40,4 +41,6 @@ export declare class Logger {
     private static deleteLogs;
 }
 export declare const path: paths.PlatformPath;
+export declare const xlog: typeof Logger;
+export {};
 //# sourceMappingURL=main.d.ts.map

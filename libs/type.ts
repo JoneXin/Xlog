@@ -56,6 +56,7 @@ export type ProjectBaseInfo = {
     logging?: boolean;
     httpConf?: httpConf;
     httpModel?: boolean;
+    delCorn?: string;
 }
 
 export type DelConf = {
