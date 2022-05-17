@@ -1,4 +1,4 @@
-const {xlog, path} = require('../dist/main');
+const {xlog, path} = require('../../dist/main');
 
 const logger = new xlog({
     filePath: path.resolve(__dirname, './logs_a'),
@@ -22,4 +22,5 @@ setInterval(() => {
 
 setInterval(() => {
     logger1.info('asdasda');
+    logger.err(new Error('asdasdasd'))
 }, 1000)

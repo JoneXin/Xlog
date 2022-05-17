@@ -25,7 +25,7 @@ const plugins = [
 export default [
 
     {
-        input: 'libs/main.ts',
+        input: 'lib/main.ts',
         external: ['chalk'],
         globals: {
             'chalk': '_'

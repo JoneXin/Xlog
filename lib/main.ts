@@ -104,7 +104,7 @@ class Logger {
 
     public static info(msgs?: any): void {
 
-        const msg = [...arguments];
+        const msg = [...arguments].map(item => (item instanceof Error) ?  item.toString() : item);
         const { filePos, lineNum } = Tools.getMsgPos(new Error());
         console.log(chalk.greenBright.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk.greenBright(JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1)) || '');
 
@@ -135,7 +135,7 @@ class Logger {
     // 静态 err
     public static err(msgs?: any): void {
 
-        const msg = [...arguments];
+        const msg = [...arguments].map(item => (item instanceof Error) ?  item.toString() : item);
         const { filePos, lineNum } = Tools.getMsgPos(new Error());
 
         console.error(chalk.redBright.bold.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk.greenBright(JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1)) || '');
@@ -184,7 +184,7 @@ class Logger {
     // 实例 info
     public info(msgs: any): void {
         
-        const msg = [...arguments];
+        const msg = [...arguments].map(item => (item instanceof Error) ?  item.toString() : item);
         const { filePos, lineNum } = this.getMsgPos(new Error());
 
         console.log(chalk.greenBright.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk.greenBright(JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1)) || '');
@@ -218,7 +218,8 @@ class Logger {
     // 实例 err
     public err(msgs: any): void {
 
-        const msg = [...arguments];
+        const msg = [...arguments].map(item => (item instanceof Error) ?  item.toString() : item);
+
         const { filePos, lineNum } = this.getMsgPos(new Error());
         console.error(chalk.redBright.bold.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk.greenBright(JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1)) || '');
         // 输出到日志文件
