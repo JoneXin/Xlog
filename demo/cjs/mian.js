@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var chalk = require('chalk');
 var require$$1 = require('fs');
 var require$$0$1 = require('constants');
@@ -1154,13 +1152,13 @@ var makeDir$1 = {};
 
 var utils$h = {};
 
-const path$d = require$$1__default$1["default"];
+const path$c = require$$1__default$1["default"];
 
 // https://github.com/nodejs/node/issues/8987
 // https://github.com/libuv/libuv/pull/1088
 utils$h.checkPath = function checkPath (pth) {
   if (process.platform === 'win32') {
-    const pathHasInvalidWinCharacters = /[<>:"|?*]/.test(pth.replace(path$d.parse(pth).root, ''));
+    const pathHasInvalidWinCharacters = /[<>:"|?*]/.test(pth.replace(path$c.parse(pth).root, ''));
 
     if (pathHasInvalidWinCharacters) {
       const error = new Error(`Path contains invalid characters: ${pth}`);
@@ -1249,7 +1247,7 @@ var utimes = {
 };
 
 const fs$e = fs$j;
-const path$c = require$$1__default$1["default"];
+const path$b = require$$1__default$1["default"];
 const util$1 = require$$4__default["default"];
 
 function getStats$2 (src, dest, opts) {
@@ -1287,8 +1285,8 @@ function checkPaths (src, dest, funcName, opts, cb) {
 
     if (destStat) {
       if (areIdentical$2(srcStat, destStat)) {
-        const srcBaseName = path$c.basename(src);
-        const destBaseName = path$c.basename(dest);
+        const srcBaseName = path$b.basename(src);
+        const destBaseName = path$b.basename(dest);
         if (funcName === 'move' &&
           srcBaseName !== destBaseName &&
           srcBaseName.toLowerCase() === destBaseName.toLowerCase()) {
@@ -1316,8 +1314,8 @@ function checkPathsSync (src, dest, funcName, opts) {
 
   if (destStat) {
     if (areIdentical$2(srcStat, destStat)) {
-      const srcBaseName = path$c.basename(src);
-      const destBaseName = path$c.basename(dest);
+      const srcBaseName = path$b.basename(src);
+      const destBaseName = path$b.basename(dest);
       if (funcName === 'move' &&
         srcBaseName !== destBaseName &&
         srcBaseName.toLowerCase() === destBaseName.toLowerCase()) {
@@ -1344,9 +1342,9 @@ function checkPathsSync (src, dest, funcName, opts) {
 // checks the src and dest inodes. It starts from the deepest
 // parent and stops once it reaches the src parent or the root path.
 function checkParentPaths (src, srcStat, dest, funcName, cb) {
-  const srcParent = path$c.resolve(path$c.dirname(src));
-  const destParent = path$c.resolve(path$c.dirname(dest));
-  if (destParent === srcParent || destParent === path$c.parse(destParent).root) return cb()
+  const srcParent = path$b.resolve(path$b.dirname(src));
+  const destParent = path$b.resolve(path$b.dirname(dest));
+  if (destParent === srcParent || destParent === path$b.parse(destParent).root) return cb()
   fs$e.stat(destParent, { bigint: true }, (err, destStat) => {
     if (err) {
       if (err.code === 'ENOENT') return cb()
@@ -1360,9 +1358,9 @@ function checkParentPaths (src, srcStat, dest, funcName, cb) {
 }
 
 function checkParentPathsSync (src, srcStat, dest, funcName) {
-  const srcParent = path$c.resolve(path$c.dirname(src));
-  const destParent = path$c.resolve(path$c.dirname(dest));
-  if (destParent === srcParent || destParent === path$c.parse(destParent).root) return
+  const srcParent = path$b.resolve(path$b.dirname(src));
+  const destParent = path$b.resolve(path$b.dirname(dest));
+  if (destParent === srcParent || destParent === path$b.parse(destParent).root) return
   let destStat;
   try {
     destStat = fs$e.statSync(destParent, { bigint: true });
@@ -1383,8 +1381,8 @@ function areIdentical$2 (srcStat, destStat) {
 // return true if dest is a subdir of src, otherwise false.
 // It only checks the path strings.
 function isSrcSubdir (src, dest) {
-  const srcArr = path$c.resolve(src).split(path$c.sep).filter(i => i);
-  const destArr = path$c.resolve(dest).split(path$c.sep).filter(i => i);
+  const srcArr = path$b.resolve(src).split(path$b.sep).filter(i => i);
+  const destArr = path$b.resolve(dest).split(path$b.sep).filter(i => i);
   return srcArr.reduce((acc, cur, i) => acc && destArr[i] === cur, true)
 }
 
@@ -1402,7 +1400,7 @@ var stat$4 = {
 };
 
 const fs$d = gracefulFs;
-const path$b = require$$1__default$1["default"];
+const path$a = require$$1__default$1["default"];
 const mkdirs$1 = mkdirs$2.mkdirs;
 const pathExists$5 = pathExists_1.pathExists;
 const utimesMillis = utimes.utimesMillis;
@@ -1440,7 +1438,7 @@ function copy$2 (src, dest, opts, cb) {
 }
 
 function checkParentDir (destStat, src, dest, opts, cb) {
-  const destParent = path$b.dirname(dest);
+  const destParent = path$a.dirname(dest);
   pathExists$5(destParent, (err, dirExists) => {
     if (err) return cb(err)
     if (dirExists) return getStats$1(destStat, src, dest, opts, cb)
@@ -1574,8 +1572,8 @@ function copyDirItems (items, src, dest, opts, cb) {
 }
 
 function copyDirItem$1 (items, item, src, dest, opts, cb) {
-  const srcItem = path$b.join(src, item);
-  const destItem = path$b.join(dest, item);
+  const srcItem = path$a.join(src, item);
+  const destItem = path$a.join(dest, item);
   stat$3.checkPaths(srcItem, destItem, 'copy', opts, (err, stats) => {
     if (err) return cb(err)
     const { destStat } = stats;
@@ -1590,7 +1588,7 @@ function onLink$1 (destStat, src, dest, opts, cb) {
   fs$d.readlink(src, (err, resolvedSrc) => {
     if (err) return cb(err)
     if (opts.dereference) {
-      resolvedSrc = path$b.resolve(process.cwd(), resolvedSrc);
+      resolvedSrc = path$a.resolve(process.cwd(), resolvedSrc);
     }
 
     if (!destStat) {
@@ -1605,7 +1603,7 @@ function onLink$1 (destStat, src, dest, opts, cb) {
           return cb(err)
         }
         if (opts.dereference) {
-          resolvedDest = path$b.resolve(process.cwd(), resolvedDest);
+          resolvedDest = path$a.resolve(process.cwd(), resolvedDest);
         }
         if (stat$3.isSrcSubdir(resolvedSrc, resolvedDest)) {
           return cb(new Error(`Cannot copy '${resolvedSrc}' to a subdirectory of itself, '${resolvedDest}'.`))
@@ -1633,7 +1631,7 @@ function copyLink$1 (resolvedSrc, dest, cb) {
 var copy_1 = copy$2;
 
 const fs$c = gracefulFs;
-const path$a = require$$1__default$1["default"];
+const path$9 = require$$1__default$1["default"];
 const mkdirsSync$1 = mkdirs$2.mkdirsSync;
 const utimesMillisSync = utimes.utimesMillisSync;
 const stat$2 = stat$4;
@@ -1660,7 +1658,7 @@ function copySync$1 (src, dest, opts) {
 
 function handleFilterAndCopy (destStat, src, dest, opts) {
   if (opts.filter && !opts.filter(src, dest)) return
-  const destParent = path$a.dirname(dest);
+  const destParent = path$9.dirname(dest);
   if (!fs$c.existsSync(destParent)) mkdirsSync$1(destParent);
   return getStats(destStat, src, dest, opts)
 }
@@ -1748,8 +1746,8 @@ function copyDir (src, dest, opts) {
 }
 
 function copyDirItem (item, src, dest, opts) {
-  const srcItem = path$a.join(src, item);
-  const destItem = path$a.join(dest, item);
+  const srcItem = path$9.join(src, item);
+  const destItem = path$9.join(dest, item);
   const { destStat } = stat$2.checkPathsSync(srcItem, destItem, 'copy', opts);
   return startCopy(destStat, srcItem, destItem, opts)
 }
@@ -1757,7 +1755,7 @@ function copyDirItem (item, src, dest, opts) {
 function onLink (destStat, src, dest, opts) {
   let resolvedSrc = fs$c.readlinkSync(src);
   if (opts.dereference) {
-    resolvedSrc = path$a.resolve(process.cwd(), resolvedSrc);
+    resolvedSrc = path$9.resolve(process.cwd(), resolvedSrc);
   }
 
   if (!destStat) {
@@ -1774,7 +1772,7 @@ function onLink (destStat, src, dest, opts) {
       throw err
     }
     if (opts.dereference) {
-      resolvedDest = path$a.resolve(process.cwd(), resolvedDest);
+      resolvedDest = path$9.resolve(process.cwd(), resolvedDest);
     }
     if (stat$2.isSrcSubdir(resolvedSrc, resolvedDest)) {
       throw new Error(`Cannot copy '${resolvedSrc}' to a subdirectory of itself, '${resolvedDest}'.`)
@@ -1804,7 +1802,7 @@ var copy$1 = {
 };
 
 const fs$b = gracefulFs;
-const path$9 = require$$1__default$1["default"];
+const path$8 = require$$1__default$1["default"];
 const assert$1 = require$$5__default["default"];
 
 const isWindows = (process.platform === 'win32');
@@ -2000,7 +1998,7 @@ function rmkids (p, options, cb) {
     if (n === 0) return options.rmdir(p, cb)
 
     files.forEach(f => {
-      rimraf$1(path$9.join(p, f), options, er => {
+      rimraf$1(path$8.join(p, f), options, er => {
         if (errState) {
           return
         }
@@ -2079,7 +2077,7 @@ function rmdirSync (p, options, originalEr) {
 function rmkidsSync (p, options) {
   assert$1(p);
   assert$1(options);
-  options.readdirSync(p).forEach(f => rimrafSync(path$9.join(p, f), options));
+  options.readdirSync(p).forEach(f => rimrafSync(path$8.join(p, f), options));
 
   if (isWindows) {
     // We only end up here once we got ENOTEMPTY at least once, and
@@ -2127,7 +2125,7 @@ var remove_1 = {
 
 const u$6 = universalify$1.fromPromise;
 const fs$9 = fs$j;
-const path$8 = require$$1__default$1["default"];
+const path$7 = require$$1__default$1["default"];
 const mkdir$3 = mkdirs$2;
 const remove$2 = remove_1;
 
@@ -2139,7 +2137,7 @@ const emptyDir = u$6(async function emptyDir (dir) {
     return mkdir$3.mkdirs(dir)
   }
 
-  return Promise.all(items.map(item => remove$2.remove(path$8.join(dir, item))))
+  return Promise.all(items.map(item => remove$2.remove(path$7.join(dir, item))))
 });
 
 function emptyDirSync (dir) {
@@ -2151,7 +2149,7 @@ function emptyDirSync (dir) {
   }
 
   items.forEach(item => {
-    item = path$8.join(dir, item);
+    item = path$7.join(dir, item);
     remove$2.removeSync(item);
   });
 }
@@ -2164,7 +2162,7 @@ var empty = {
 };
 
 const u$5 = universalify$1.fromCallback;
-const path$7 = require$$1__default$1["default"];
+const path$6 = require$$1__default$1["default"];
 const fs$8 = gracefulFs;
 const mkdir$2 = mkdirs$2;
 
@@ -2178,7 +2176,7 @@ function createFile$1 (file, callback) {
 
   fs$8.stat(file, (err, stats) => { // eslint-disable-line handle-callback-err
     if (!err && stats.isFile()) return callback()
-    const dir = path$7.dirname(file);
+    const dir = path$6.dirname(file);
     fs$8.stat(dir, (err, stats) => {
       if (err) {
         // if the directory doesn't exist, make it
@@ -2210,7 +2208,7 @@ function createFileSync$1 (file) {
   } catch {}
   if (stats && stats.isFile()) return
 
-  const dir = path$7.dirname(file);
+  const dir = path$6.dirname(file);
   try {
     if (!fs$8.statSync(dir).isDirectory()) {
       // parent is not a directory
@@ -2232,7 +2230,7 @@ var file = {
 };
 
 const u$4 = universalify$1.fromCallback;
-const path$6 = require$$1__default$1["default"];
+const path$5 = require$$1__default$1["default"];
 const fs$7 = gracefulFs;
 const mkdir$1 = mkdirs$2;
 const pathExists$4 = pathExists_1.pathExists;
@@ -2254,7 +2252,7 @@ function createLink$1 (srcpath, dstpath, callback) {
       }
       if (dstStat && areIdentical$1(srcStat, dstStat)) return callback(null)
 
-      const dir = path$6.dirname(dstpath);
+      const dir = path$5.dirname(dstpath);
       pathExists$4(dir, (err, dirExists) => {
         if (err) return callback(err)
         if (dirExists) return makeLink(srcpath, dstpath)
@@ -2281,7 +2279,7 @@ function createLinkSync$1 (srcpath, dstpath) {
     throw err
   }
 
-  const dir = path$6.dirname(dstpath);
+  const dir = path$5.dirname(dstpath);
   const dirExists = fs$7.existsSync(dir);
   if (dirExists) return fs$7.linkSync(srcpath, dstpath)
   mkdir$1.mkdirsSync(dir);
@@ -2294,7 +2292,7 @@ var link = {
   createLinkSync: createLinkSync$1
 };
 
-const path$5 = require$$1__default$1["default"];
+const path$4 = require$$1__default$1["default"];
 const fs$6 = gracefulFs;
 const pathExists$3 = pathExists_1.pathExists;
 
@@ -2321,7 +2319,7 @@ const pathExists$3 = pathExists_1.pathExists;
  */
 
 function symlinkPaths$1 (srcpath, dstpath, callback) {
-  if (path$5.isAbsolute(srcpath)) {
+  if (path$4.isAbsolute(srcpath)) {
     return fs$6.lstat(srcpath, (err) => {
       if (err) {
         err.message = err.message.replace('lstat', 'ensureSymlink');
@@ -2333,8 +2331,8 @@ function symlinkPaths$1 (srcpath, dstpath, callback) {
       })
     })
   } else {
-    const dstdir = path$5.dirname(dstpath);
-    const relativeToDst = path$5.join(dstdir, srcpath);
+    const dstdir = path$4.dirname(dstpath);
+    const relativeToDst = path$4.join(dstdir, srcpath);
     return pathExists$3(relativeToDst, (err, exists) => {
       if (err) return callback(err)
       if (exists) {
@@ -2350,7 +2348,7 @@ function symlinkPaths$1 (srcpath, dstpath, callback) {
           }
           return callback(null, {
             toCwd: srcpath,
-            toDst: path$5.relative(dstdir, srcpath)
+            toDst: path$4.relative(dstdir, srcpath)
           })
         })
       }
@@ -2360,7 +2358,7 @@ function symlinkPaths$1 (srcpath, dstpath, callback) {
 
 function symlinkPathsSync$1 (srcpath, dstpath) {
   let exists;
-  if (path$5.isAbsolute(srcpath)) {
+  if (path$4.isAbsolute(srcpath)) {
     exists = fs$6.existsSync(srcpath);
     if (!exists) throw new Error('absolute srcpath does not exist')
     return {
@@ -2368,8 +2366,8 @@ function symlinkPathsSync$1 (srcpath, dstpath) {
       toDst: srcpath
     }
   } else {
-    const dstdir = path$5.dirname(dstpath);
-    const relativeToDst = path$5.join(dstdir, srcpath);
+    const dstdir = path$4.dirname(dstpath);
+    const relativeToDst = path$4.join(dstdir, srcpath);
     exists = fs$6.existsSync(relativeToDst);
     if (exists) {
       return {
@@ -2381,7 +2379,7 @@ function symlinkPathsSync$1 (srcpath, dstpath) {
       if (!exists) throw new Error('relative srcpath does not exist')
       return {
         toCwd: srcpath,
-        toDst: path$5.relative(dstdir, srcpath)
+        toDst: path$4.relative(dstdir, srcpath)
       }
     }
   }
@@ -2423,7 +2421,7 @@ var symlinkType_1 = {
 };
 
 const u$3 = universalify$1.fromCallback;
-const path$4 = require$$1__default$1["default"];
+const path$3 = require$$1__default$1["default"];
 const fs$4 = fs$j;
 const _mkdirs = mkdirs$2;
 const mkdirs = _mkdirs.mkdirs;
@@ -2464,7 +2462,7 @@ function _createSymlink (srcpath, dstpath, type, callback) {
     srcpath = relative.toDst;
     symlinkType(relative.toCwd, type, (err, type) => {
       if (err) return callback(err)
-      const dir = path$4.dirname(dstpath);
+      const dir = path$3.dirname(dstpath);
       pathExists$2(dir, (err, dirExists) => {
         if (err) return callback(err)
         if (dirExists) return fs$4.symlink(srcpath, dstpath, type, callback)
@@ -2491,7 +2489,7 @@ function createSymlinkSync$1 (srcpath, dstpath, type) {
   const relative = symlinkPathsSync(srcpath, dstpath);
   srcpath = relative.toDst;
   type = symlinkTypeSync(relative.toCwd, type);
-  const dir = path$4.dirname(dstpath);
+  const dir = path$3.dirname(dstpath);
   const exists = fs$4.existsSync(dir);
   if (exists) return fs$4.symlinkSync(srcpath, dstpath, type)
   mkdirsSync(dir);
@@ -2641,7 +2639,7 @@ var jsonfile = {
 
 const u$2 = universalify$1.fromCallback;
 const fs$3 = gracefulFs;
-const path$3 = require$$1__default$1["default"];
+const path$2 = require$$1__default$1["default"];
 const mkdir = mkdirs$2;
 const pathExists$1 = pathExists_1.pathExists;
 
@@ -2651,7 +2649,7 @@ function outputFile$1 (file, data, encoding, callback) {
     encoding = 'utf8';
   }
 
-  const dir = path$3.dirname(file);
+  const dir = path$2.dirname(file);
   pathExists$1(dir, (err, itDoes) => {
     if (err) return callback(err)
     if (itDoes) return fs$3.writeFile(file, data, encoding, callback)
@@ -2665,7 +2663,7 @@ function outputFile$1 (file, data, encoding, callback) {
 }
 
 function outputFileSync$1 (file, ...args) {
-  const dir = path$3.dirname(file);
+  const dir = path$2.dirname(file);
   if (fs$3.existsSync(dir)) {
     return fs$3.writeFileSync(file, ...args)
   }
@@ -2716,7 +2714,7 @@ jsonFile.readJSONSync = jsonFile.readJsonSync;
 var json = jsonFile;
 
 const fs$2 = gracefulFs;
-const path$2 = require$$1__default$1["default"];
+const path$1 = require$$1__default$1["default"];
 const copy = copy$1.copy;
 const remove$1 = remove_1.remove;
 const mkdirp = mkdirs$2.mkdirp;
@@ -2737,7 +2735,7 @@ function move$1 (src, dest, opts, cb) {
     stat$1.checkParentPaths(src, srcStat, dest, 'move', err => {
       if (err) return cb(err)
       if (isParentRoot$1(dest)) return doRename$1(src, dest, overwrite, isChangingCase, cb)
-      mkdirp(path$2.dirname(dest), err => {
+      mkdirp(path$1.dirname(dest), err => {
         if (err) return cb(err)
         return doRename$1(src, dest, overwrite, isChangingCase, cb)
       });
@@ -2746,8 +2744,8 @@ function move$1 (src, dest, opts, cb) {
 }
 
 function isParentRoot$1 (dest) {
-  const parent = path$2.dirname(dest);
-  const parsedPath = path$2.parse(parent);
+  const parent = path$1.dirname(dest);
+  const parsedPath = path$1.parse(parent);
   return parsedPath.root === parent
 }
 
@@ -2788,7 +2786,7 @@ function moveAcrossDevice$1 (src, dest, overwrite, cb) {
 var move_1 = move$1;
 
 const fs$1 = gracefulFs;
-const path$1 = require$$1__default$1["default"];
+const path = require$$1__default$1["default"];
 const copySync = copy$1.copySync;
 const removeSync = remove_1.removeSync;
 const mkdirpSync = mkdirs$2.mkdirpSync;
@@ -2800,13 +2798,13 @@ function moveSync (src, dest, opts) {
 
   const { srcStat, isChangingCase = false } = stat.checkPathsSync(src, dest, 'move', opts);
   stat.checkParentPathsSync(src, srcStat, dest, 'move');
-  if (!isParentRoot(dest)) mkdirpSync(path$1.dirname(dest));
+  if (!isParentRoot(dest)) mkdirpSync(path.dirname(dest));
   return doRename(src, dest, overwrite, isChangingCase)
 }
 
 function isParentRoot (dest) {
-  const parent = path$1.dirname(dest);
-  const parsedPath = path$1.parse(parent);
+  const parent = path.dirname(dest);
+  const parsedPath = path.parse(parent);
   return parsedPath.root === parent
 }
 
@@ -17642,7 +17640,7 @@ class Logger {
         console.log(chalk__default["default"].greenBright.underline(filePos), `【rows: ${lineNum}】`, ' ==> ', chalk__default["default"].greenBright(JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1)) || '');
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push((cb) => __awaiter(this, void 0, void 0, function* () {
-                yield Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
+                yield Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: require$$1__default$1["default"].join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             }));
         }
@@ -17671,7 +17669,7 @@ class Logger {
         // 输出到日志文件
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push((cb) => __awaiter(this, void 0, void 0, function* () {
-                yield Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
+                yield Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: require$$1__default$1["default"].join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             }));
         }
@@ -17783,11 +17781,11 @@ class Logger {
         }));
     }
 }
+Logger.path = require$$1__default$1["default"];
+Logger.xlog = Logger;
 Logger.keepDays = 3; // 默认3 天
 Logger.delJobs = null; // 定时删除任务id
 Logger.delCorn = '0 0 */1 * * *'; // 每小时执行一次
-const path = require$$1__default$1["default"];
-const xlog = Logger.initLogger();
-
-exports.path = path;
-exports.xlog = xlog;
+module.exports = Logger.initLogger();
+// Allow use of default import syntax in TypeScript
+module.exports.default = Logger.initLogger();

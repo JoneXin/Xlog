@@ -1,6 +1,6 @@
 ## 使用
 ```
-const {xlog} = require('xlog');
+const xlog = require('xlog');
 
 xlog.info('sada');
 xlog.err('sada');

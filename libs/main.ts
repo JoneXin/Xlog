@@ -12,6 +12,9 @@ import { resolve } from 'path';
 import paths from 'path';
 class Logger {
 
+    public static path = paths;
+    public static xlog = Logger;
+
     private projectName = 'default';
     private category: string [] = [];
     private filePath: string;
@@ -188,7 +191,7 @@ class Logger {
 
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push(async cb => {
-                await Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
+                await Tools.saveLogs({ filePos, lineNum, types: 'info', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: paths.join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             });
         }
@@ -221,7 +224,7 @@ class Logger {
         // 输出到日志文件
         if (process.env.NODE_ENV == 'production' || this.logging) {
             this.logsQueue.push(async cb => {
-                await Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: path.join(this.filePath, ...this.category), logsName: this.logsName });
+                await Tools.saveLogs({ filePos, lineNum, types: 'error', msg: JSON.stringify(msg).slice(1, JSON.stringify(msg).length - 1) }, { filePath: paths.join(this.filePath, ...this.category), logsName: this.logsName });
                 cb();
             })
         }
@@ -346,5 +349,7 @@ class Logger {
     }
 }
 
-export const path = paths;
-export const xlog = Logger.initLogger();
+
+module.exports = Logger.initLogger();
+// Allow use of default import syntax in TypeScript
+module.exports.default =  Logger.initLogger();
